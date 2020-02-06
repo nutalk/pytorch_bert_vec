@@ -1,22 +1,18 @@
 import numpy as np
 import torch
 from transformers import BertModel, BertConfig, BertTokenizer
-import sys
 from scipy.spatial.distance import cosine
-
-sys.path.append('../')
 
 from albert.albert_total import get_albert_total
 from torch import nn
 
-config_path = '../model/bert/bert_config.json'
-model_path = '../model/bert/pytorch_model.bin'
-vocab_path = '../model/bert/vocab.txt'
+config_path = 'model/bert/bert_config.json'
+model_path = 'model/bert/pytorch_model.bin'
+vocab_path = 'model/bert/vocab.txt'
 
-
-al_config_path = '../model/albert_tiny/bert_config.json'
-al_model_path = '../model/albert_tiny/pytorch_model.bin'
-al_vocab_path = '../model/albert_tiny/vocab.txt'
+al_config_path = 'model/albert_tiny/bert_config.json'
+al_model_path = 'model/albert_tiny/pytorch_model.bin'
+al_vocab_path = 'model/albert_tiny/vocab.txt'
 
 
 class BertTextNet(nn.Module):
@@ -93,30 +89,23 @@ class AlbertTextNet(BertTextNet):
         return text_embeddings
 
 
-
 if __name__ == '__main__':
-    texts = ["搭载着中国第36次南极科学考察队队员的“雪龙2”号极地科考破冰船7日与“雪龙”号进行短暂相聚后，\
-    离开澳大利亚霍巴特港，将穿越“咆哮西风带”。",
-             "这是“雪龙2”号首次穿越西风带，也是其自下水以来所面临的最严峻的一次考验。",
-             "我国具有完全自主知识产权的智能动车组昨天（7日）首次在京张高铁线路上参与联调联试，最高测试速度达到350km/h。",
-             "京张高铁正线全长174公里，今年底通车后北京到张家口只需50分钟左右。",
-             "越南公安部7日晚间发布公告说，越方和英方已确认英国货车惨案39名遇难者均为越南公民。",
-             "越南总理阮春福7日代表政府向遇难者亲属致以慰问，并指示越南相关部门和省市继续与英方合作处理相关事宜，早日运回遇难者遗体。",
-             "阮春福表示，越南政府强烈谴责人口贩运和组织偷渡等违法行为，呼吁地区和世界各国继续加强合作，打击此类严重犯罪行为，\
-             避免悲剧重演，希望案件的调查、起诉和审判工作尽早完成，犯罪分子得到严惩。",
-             "美国总统特朗普6日说，他与土耳其总统埃尔多安通电话讨论了叙利亚局势、反恐等问题，他期待埃尔多安下周到访美国。"
+    texts = ["今天天气不错，适合出行。",
+             "今天是晴天，可以出去玩。",
+             "施工前需要开工前会。",
+             "工作过程中安全第一。"
              ]
     last_vec = None
     distances = []
-    text_net = BertTextNet() # 选择一个文本向量化模型
-    seq2vec = BertSeqVec(text_net) #将模型实例给向量化对象。
+    text_net = BertTextNet()  # 选择一个文本向量化模型
+    seq2vec = BertSeqVec(text_net)  # 将模型实例给向量化对象。
     for text in texts:
-        vec = seq2vec.seq2vec(text) #向量化
+        vec = seq2vec.seq2vec(text)  # 向量化
         if last_vec is None:
             last_vec = vec
         else:
             dis = cosine(vec, last_vec)
             distances.append(dis)
             last_vec = vec
-    print(np.array(distances) - np.mean(np.array(distances)))
+    print(np.array(distances))
     print('done')
